@@ -1,0 +1,21 @@
+;; test program 00
+
+.org 0x0000
+
+; main function
+.main:
+    mov RAX, 0xA
+    mov RBX, 0xFFFFEEEE
+.l0:                        ; for 10 to 0
+    dec RAX
+    cmp RAX, 0
+    jmp print
+    jne l0
+    ret
+
+.print:
+    mov R1, 1              ; stdout
+    mov R2, 1              ; one byte
+    mov R3, AL             ; buffer pointer, one byte
+    syscall
+    ret
