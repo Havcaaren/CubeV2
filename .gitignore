@@ -1,5 +1,9 @@
 cmake-*
 .idea*
+<<<<<<< HEAD
 *.o
 *.gch
 a.out
+=======
+vivado_proj
+>>>>>>> HDL
