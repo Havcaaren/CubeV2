@@ -1,2 +1,5 @@
 cmake-*
 .idea*
+*.o
+*.gch
+a.out
