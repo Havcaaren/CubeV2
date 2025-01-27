@@ -7,6 +7,7 @@ char *read_file(const char *fp) {
     fseek(f, 0, SEEK_SET);
 
     char *buffer = calloc(len, sizeof(char));
+    memset(buffer, ' ', len);
     fread(buffer, sizeof(char), len, f);
     buffer[len] = '\0';
     return buffer;
@@ -29,8 +30,11 @@ char *remove_comments(char *fp) {
 
 char *remove_empty_lines(char *fp) {
     char *buffer = calloc(strlen(fp), sizeof(char));
+    memset(buffer, ' ', strlen(fp));
     char *buffer1 = calloc(strlen(fp), sizeof(char));
+    memset(buffer1, ' ', strlen(fp));
     char *buffer2 = calloc(strlen(fp), sizeof(char));
+    memset(buffer2, ' ', strlen(fp));
     int j = 0;
     for (int i = 0; fp[i] != '\0'; i++) {
         if (fp[i] == ' ') {

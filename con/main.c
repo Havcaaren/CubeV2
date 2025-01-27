@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "util.h"
-
+#include "compiler.h"
 
 int main(const int argc, char** argv) {
     if (argc < 2) {
@@ -14,17 +14,20 @@ int main(const int argc, char** argv) {
     fl = remove_comments(fl);
     fl = remove_empty_lines(fl);
 
-    //printf("%s", fl);
+    printf("%s", fl);
 
-    line_list* lt = process_file_to_list(fl);
-    line_list* it = lt;
-    while (it->next != NULL) {
-        printf("Num: %d, %s\n", it->node->number, it->node->org);
-        it = it->next;
+    OP_LINE **A = parse_file(fl);
+    int i = 0;
+    while (A[i] != NULL) {
+        printf("%d, ", A[i]->address);
+        if (A[i]->address_label != NULL) {
+            printf("%s, ", A[i]->address_label);
+        }
+        if (A[i]->op != NULL) {
+            printf("%s, ", A[i]->op);
+        }
+        i++;
     }
-
-    free_list(lt);
-
 
     free(fl);
     return 0;

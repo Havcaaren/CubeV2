@@ -5,12 +5,14 @@ all: main
 util.o: util.c util.h
 	gcc $(FLAGS) -c util.h util.c
 
-line_processing.o: line_processing.c line_processing.h
-	gcc $(FLAGS) -c line_processing.h line_processing.c
+compiler.o: compiler.h compiler.c
+	gcc $(FLAGS) -c compiler.h compiler.c
 
+main: main.c util.o compiler.o
+	gcc $(FLAGS) -o con main.c util.o compiler.o
 
-main: main.c util.o line_processing.o
-	gcc $(FLAGS) -o con main.c util.o line_processing.o
+run: main
+	./con input.txt
 
 clear:
 	rm *.o *.gch con

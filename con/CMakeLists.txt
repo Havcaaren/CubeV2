@@ -6,6 +6,6 @@ set(CMAKE_C_STANDARD 23)
 add_executable(con main.c
         util.c
         util.h
-        line_processing.c
-        line_processing.h
+        compiler.c
+        compiler.h
 )
