@@ -1,0 +1,25 @@
+.module auto
+
+.double_numb: ;; RHX -> RHX
+    lsl RHX
+    ret
+
+.fib:  ;; RHX -> RHX
+    ;; internal RIX, RJX, RKX
+    push RIX
+    push RJX
+    push RKX
+
+    mov RIX, 0
+    mov RJX, 1
+.fib_for:
+    add RKX, RIX, RJX
+    mov RIX, RJX
+    mov RJX, RKX
+    dec RHX
+    jnz fib_for
+
+    pop RKX
+    pop RJX
+    pop RIX
+    ret
