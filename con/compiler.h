@@ -16,27 +16,27 @@ enum code_line_type {
 typedef struct {
     enum code_line_type type;
 
-    union val {
-        struct command {
+    union {
+        struct {
             char *name;
-            char **ops;
-        };
+            char *ops;
+        } command;
 
-        struct label {
+        struct {
             char *name;
             int address;
-        };
+        } label;
 
-        struct instruction {
+        struct {
             char *op;
             char *a0;
             char *a1;
             char *a2;
-        };
-    };
+        } instruction;
+    } val;
 } CODE_LINE;
 
-CODE_LINE *create_line_command(char *n, char **o);
+CODE_LINE *create_line_command(char *n, char *o);
 
 CODE_LINE *create_line_label(char *n, int a);
 
