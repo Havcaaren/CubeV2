@@ -93,3 +93,21 @@ int eval_num(char *num) {
 
     return ret;
 }
+
+CODE_LINE **process_file(char **fp) {
+    int index = 0;
+    int max = 10;
+    CODE_LINE **arr = calloc(max, sizeof(CODE_LINE *));
+    int ptr = 0;
+    while (fp[ptr] != NULL) {
+
+        
+        index++;
+        if (index + 1 == max) {
+            max += max / 2;
+            arr = realloc(arr, sizeof(CODE_LINE *) * max);
+        }
+    }
+
+    return arr;
+}
