@@ -33,8 +33,6 @@ char *remove_empty_lines(char *fp) {
     memset(buffer, ' ', strlen(fp));
     char *buffer1 = calloc(strlen(fp), sizeof(char));
     memset(buffer1, ' ', strlen(fp));
-    char *buffer2 = calloc(strlen(fp), sizeof(char));
-    memset(buffer2, ' ', strlen(fp));
     int j = 0;
     for (int i = 0; fp[i] != '\0'; i++) {
         if (fp[i] == ' ') {
@@ -54,17 +52,38 @@ char *remove_empty_lines(char *fp) {
         j++;
     }
 
-    j = 0;
-    for (int i = 0; buffer1[i] != '\0'; i++) {
-        if ((buffer1[i - 1] == ':')) {
-            for (; buffer1[i] == ' ' || buffer1[i] == '\n'; i++) {
-            }
-        }
-        buffer2[j] = buffer1[i];
-        j++;
-    }
     free(fp);
     free(buffer);
-    free(buffer1);
-    return buffer2;
+    return buffer1;
+}
+
+char *split_prep(char *fp) {
+    for (int i = 0; fp[i] != '\0'; ++i) {
+        if (fp[i] == '\n' || fp[i] == ',') {
+            fp[i] = ' ';
+        }
+    }
+    return fp;
+}
+
+char **split_to_array(char *fp) {
+    int i = 0;
+    int max = 100;
+    char **arr = calloc(max, sizeof(char *));
+
+    fp = split_prep(fp);
+    char *tok = strtok(fp, " ");
+    while (tok != NULL) {
+        arr[i] = calloc(strlen(tok) + 1, sizeof(char));
+        strcpy(arr[i], tok);
+
+        i++;
+        if (i + 1 == max) {
+            max += (max / 2);
+            arr = realloc(arr, sizeof(char *) * max);
+        }
+
+        tok = strtok(NULL, " ");
+    }
+    return arr;
 }

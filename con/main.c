@@ -4,7 +4,7 @@
 #include "util.h"
 #include "compiler.h"
 
-int main(const int argc, char** argv) {
+int main(const int argc, char **argv) {
     if (argc < 2) {
         printf("No input file\n");
         return -1;
@@ -14,18 +14,10 @@ int main(const int argc, char** argv) {
     fl = remove_comments(fl);
     fl = remove_empty_lines(fl);
 
-    printf("%s", fl);
-
-    OP_LINE **A = parse_file(fl);
+    char **a = split_to_array(fl);
     int i = 0;
-    while (A[i] != NULL) {
-        printf("%d, ", A[i]->address);
-        if (A[i]->address_label != NULL) {
-            printf("%s, ", A[i]->address_label);
-        }
-        if (A[i]->op != NULL) {
-            printf("%s, ", A[i]->op);
-        }
+    while (a[i] != NULL) {
+        printf("%s\n", a[i]);
         i++;
     }
 

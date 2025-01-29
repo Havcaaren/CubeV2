@@ -14,4 +14,8 @@ char *remove_comments(char *fp);
 
 char *remove_empty_lines(char *fp);
 
+char *split_prep(char *fp);
+
+char **split_to_array(char *fp);
+
 #endif //CUBE_UTIL_H

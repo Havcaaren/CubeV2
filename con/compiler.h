@@ -17,7 +17,7 @@ OP_LINE *create_op_line(int a, const char *l, const char *op, const char *a1, co
 
 void delete_op_line(OP_LINE *op);
 
-char *get_label(char *line);
+int eval_num(char *num);
 
 OP_LINE **parse_file(char *file);
 

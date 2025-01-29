@@ -1,7 +1,7 @@
 #include "compiler.h"
 
 OP_LINE *create_op_line(const int a, const char *l, const char *op, const char *a1, const char *a2) {
-    OP_LINE *o = malloc( sizeof(struct op_line));
+    OP_LINE *o = malloc(sizeof(struct op_line));
 
     o->address = a;
     if (l != NULL) {
@@ -31,64 +31,41 @@ void delete_op_line(OP_LINE *op) {
     free(op);
 }
 
-char **get_parts(char *line) {
-    char **parts = calloc(4, sizeof(char*));
-    if (line[0] == '.') {
-        parts[0] = strtok(line, ":");
+int eval_num(char *num) {
+    int base = 10;
+    int ret = 0;
+    if (num[0] == '0' && num[1] == 'x') {
+        base = 16;
+    } else if (num[0] == '0' && num[1] == 'b') {
+        base = 2;
     }
-    parts[1] = strtok(NULL, " ");
-    parts[2] = strtok(NULL, ",");
-    parts[3] = strtok(NULL, ",");
-
-    return parts;
-}
-
-char *get_label(char *line) {
-    if (line[0] == '.') {
-        char *index = strtok(line, ":");
-        line = strtok(NULL, ":");
-        return index;
+    int ptr = 1;
+    for (int len = strlen(num); len != 2; --len) {
+        ret += num[len] * base;
+        base = base << ptr;
+        ptr++;
     }
-    return NULL;
+
+
+    return ret;
 }
 
-char **get_ops(char *line) {
-    char **toks = calloc(3, sizeof(char*));
-    toks[0] = strtok(line, " ");
-    toks[1] = strtok(NULL, ",");
-    toks[2] = strtok(NULL, ",");
-    return toks;
-}
-
-OP_LINE **parse_file(char *file) {
+OP_LINE **parse_file(char **toks) {
     int max = 10;
     int i = 0;
     OP_LINE **lines = calloc(max, sizeof(OP_LINE *));
-    char *tok = strtok(file, "\n");
     int address = 0;
-    char *label;
-    char *op;
-    char *arg1;
-    char *arg2;
-    char *base = file + strlen(tok) + 1;
-    while (tok != NULL) {
-        char **ops = get_parts(tok);
-        label = ops[0];
-        op = ops[1];
-        arg1 = ops[2];
-        arg2 = ops[3];
-        lines[i] = create_op_line(address, label, op, arg1, arg2);
-        free(ops);
-        if (i + 2 == max) {
-            lines = realloc(lines, max + (max / 2));
-            max += (max / 2);
+    int j = 0;
+    while (toks[j] != NULL) {
+        if (toks[j][0] == '.') { // label or com
         }
+
         i++;
-        address++;
-        tok = strtok(base, "\n");
-        base = tok;
+        if (i + 1 == max) {
+            max += (max / 2);
+            lines = realloc(lines, sizeof(OP_LINE *) * max);
+        }
     }
-    free(tok);
-    lines[i+1] = NULL;
+    lines[i + 1] = NULL;
     return lines;
 }
