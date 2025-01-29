@@ -1,34 +1,21 @@
 #include "compiler.h"
 
-OP_LINE *create_op_line(const int a, const char *l, const char *op, const char *a1, const char *a2) {
-    OP_LINE *o = malloc(sizeof(struct op_line));
-
-    o->address = a;
-    if (l != NULL) {
-        o->address_label = calloc(strlen(l), sizeof(char));
-        strcpy(o->address_label, l);
-    }
-    if (op != NULL) {
-        o->op = calloc(strlen(op), sizeof(char));
-        strcpy(o->op, op);
-    }
-    if (a1 != NULL) {
-        o->arg1 = calloc(strlen(a1), sizeof(char));
-        strcpy(o->arg1, a1);
-    }
-    if (a2 != NULL) {
-        o->arg2 = calloc(strlen(a2), sizeof(char));
-        strcpy(o->arg2, a2);
-    }
-    return o;
+CODE_LINE *create_line_command(char *n, char **o) {
 }
 
-void delete_op_line(OP_LINE *op) {
-    free(op->address_label);
-    free(op->op);
-    free(op->arg1);
-    free(op->arg2);
-    free(op);
+CODE_LINE *create_line_label(char *n, int a) {
+}
+
+CODE_LINE *create_line_op_0A(char *o) {
+}
+
+CODE_LINE *create_line_op_1A(char *o, char *a0) {
+}
+
+CODE_LINE *create_line_op_2A(char *o, char *a0, char *a1) {
+}
+
+CODE_LINE *create_line_op_3A(char *o, char *a0, char *a1, char *a2) {
 }
 
 int eval_num(char *num) {
@@ -48,24 +35,4 @@ int eval_num(char *num) {
 
 
     return ret;
-}
-
-OP_LINE **parse_file(char **toks) {
-    int max = 10;
-    int i = 0;
-    OP_LINE **lines = calloc(max, sizeof(OP_LINE *));
-    int address = 0;
-    int j = 0;
-    while (toks[j] != NULL) {
-        if (toks[j][0] == '.') { // label or com
-        }
-
-        i++;
-        if (i + 1 == max) {
-            max += (max / 2);
-            lines = realloc(lines, sizeof(OP_LINE *) * max);
-        }
-    }
-    lines[i + 1] = NULL;
-    return lines;
 }

@@ -4,21 +4,51 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct op_line {
-    int address;
-    char *address_label;
+enum code_line_type {
+    code_line_command,
+    code_line_label,
+    code_line_instruction_0A,
+    code_line_instruction_1A,
+    code_line_instruction_2A,
+    code_line_instruction_3A
+};
 
-    char *op;
-    char *arg1;
-    char *arg2;
-} OP_LINE;
+typedef struct {
+    enum code_line_type type;
 
-OP_LINE *create_op_line(int a, const char *l, const char *op, const char *a1, const char *a2);
+    union val {
+        struct command {
+            char *name;
+            char **ops;
+        };
 
-void delete_op_line(OP_LINE *op);
+        struct label {
+            char *name;
+            int address;
+        };
+
+        struct instruction {
+            char *op;
+            char *a0;
+            char *a1;
+            char *a2;
+        };
+    };
+} CODE_LINE;
+
+CODE_LINE *create_line_command(char *n, char **o);
+
+CODE_LINE *create_line_label(char *n, int a);
+
+CODE_LINE *create_line_op_0A(char *o);
+
+CODE_LINE *create_line_op_1A(char *o, char *a0);
+
+CODE_LINE *create_line_op_2A(char *o, char *a0, char *a1);
+
+CODE_LINE *create_line_op_3A(char *o, char *a0, char *a1, char *a2);
 
 int eval_num(char *num);
 
-OP_LINE **parse_file(char *file);
 
 #endif //COMPILER_H
