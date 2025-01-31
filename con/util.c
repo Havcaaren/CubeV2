@@ -59,7 +59,7 @@ char *remove_empty_lines(char *fp) {
 
 char *split_prep(char *fp) {
     for (int i = 0; fp[i] != '\0'; ++i) {
-        if (fp[i] == '\n' || fp[i] == ',') {
+        if (fp[i] == ':' || fp[i] == ',') {
             fp[i] = ' ';
         }
     }
@@ -72,18 +72,27 @@ char **split_to_array(char *fp) {
     char **arr = calloc(max, sizeof(char *));
 
     fp = split_prep(fp);
-    char *tok = strtok(fp, " ");
+    char *tok = strtok(fp, "\n");
     while (tok != NULL) {
         arr[i] = calloc(strlen(tok) + 1, sizeof(char));
-        strcpy(arr[i], tok);
-
-        i++;
+        bool can = false;
+        for (int j = 0; tok[j] != '\0'; ++j) {
+            if (tok[j] != ' ') {
+                can = true;
+                break;
+            }
+        }
+        if (can == true) {
+            strcpy(arr[i], tok);
+            i++;
+        }
         if (i + 1 == max) {
             max += (max / 2);
             arr = realloc(arr, sizeof(char *) * max);
         }
 
-        tok = strtok(NULL, " ");
+        tok = strtok(NULL, "\n");
     }
+    arr[i] = NULL;
     return arr;
 }

@@ -21,6 +21,8 @@ int main(const int argc, char **argv) {
         i++;
     }
 
+    CODE_LINE **arr = process_file(a);
+
     free(fl);
     return 0;
 }

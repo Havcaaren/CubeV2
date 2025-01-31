@@ -50,6 +50,8 @@ CODE_LINE *create_line_op_3A(char *o, char *a0, char *a1, char *a2);
 
 int eval_num(char *num);
 
+char *strip_label(char *l);
+
 CODE_LINE **process_file(char **fp);
 
 #endif //COMPILER_H

@@ -6,8 +6,10 @@ CODE_LINE *create_line_command(char *n, char *o) {
     s->type = code_line_command;
     s->val.command.name = calloc(strlen(n) + 1, sizeof(char));
     strcpy(s->val.command.name, n);
-    s->val.command.ops = calloc(strlen(n) + 1, sizeof(char));
-    strcpy(s->val.command.ops, o);
+    if (o != NULL) {
+        s->val.command.ops = calloc(strlen(n) + 1, sizeof(char));
+        strcpy(s->val.command.ops, o);
+    }
 
     return s;
 }
@@ -94,15 +96,53 @@ int eval_num(char *num) {
     return ret;
 }
 
+char *strip_label(char *l) {
+    char *ret = calloc(strlen(l), sizeof(char));
+
+    strcpy(ret, (l + 1));
+    ret[strlen(ret) - 1] = '\0';
+    free(l);
+
+    return ret;
+}
+
 CODE_LINE **process_file(char **fp) {
     int index = 0;
     int max = 10;
     CODE_LINE **arr = calloc(max, sizeof(CODE_LINE *));
     int ptr = 0;
+    int address = 0;
     while (fp[ptr] != NULL) {
+        char* base = calloc(strlen(fp[ptr]) + 1, sizeof(char));
+        strcpy(base, fp[ptr]);
+        if (fp[ptr][0] == '.') {
+            if (strchr(fp[ptr], ':') != NULL) {
+                arr[index] = create_line_label(strip_label(base), address);
+                address++;
+            } else {
+                char *f1 = strtok(base, " ");
+                char *f2 = strtok(NULL, "\n");
+                arr[index] = create_line_command(f1, f2);
+            }
+        } else {
+            char *op = strtok(base, " ");
+            char *f1 = strtok(NULL, " ");
+            char *f2 = strtok(NULL, " ");
+            char *f3 = strtok(NULL, " ");
+            if (f3 != NULL) {
+                arr[index] = create_line_op_3A(op, f1, f2, f3);
+            } else if (f2 != NULL) {
+                arr[index] = create_line_op_2A(op, f1, f2);
+            } else if (f1 != NULL) {
+                arr[index] = create_line_op_1A(op, f1);
+            } else {
+                arr[index] = create_line_op_0A(op);
+            }
+            address++;
+        }
 
-        
         index++;
+        ptr++;
         if (index + 1 == max) {
             max += max / 2;
             arr = realloc(arr, sizeof(CODE_LINE *) * max);
