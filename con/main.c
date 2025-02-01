@@ -2,9 +2,9 @@
 #include <stdlib.h>
 
 #include "util.h"
+#include "compiler.h"
 
-
-int main(const int argc, char** argv) {
+int main(const int argc, char **argv) {
     if (argc < 2) {
         printf("No input file\n");
         return -1;
@@ -14,17 +14,14 @@ int main(const int argc, char** argv) {
     fl = remove_comments(fl);
     fl = remove_empty_lines(fl);
 
-    //printf("%s", fl);
-
-    line_list* lt = process_file_to_list(fl);
-    line_list* it = lt;
-    while (it->next != NULL) {
-        printf("Num: %d, %s\n", it->node->number, it->node->org);
-        it = it->next;
+    char **a = split_to_array(fl);
+    int i = 0;
+    while (a[i] != NULL) {
+        printf("%s\n", a[i]);
+        i++;
     }
 
-    free_list(lt);
-
+    CODE_LINE **arr = process_file(a);
 
     free(fl);
     return 0;

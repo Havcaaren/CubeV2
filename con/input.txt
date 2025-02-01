@@ -1,4 +1,5 @@
 ;; test program 00
+.master
 
 .org 0x0000
 
@@ -9,13 +10,16 @@
 .l0:                        ; for 10 to 0
     dec RAX
     cmp RAX, 0
-    jmp print
+    call print
     jne l0
+
+    mov RHX, 5
+    call fib
     ret
 
 .print:
-    mov R1, 1              ; stdout
-    mov R2, 1              ; one byte
-    mov R3, AL             ; buffer pointer, one byte
+    mov RAX, 1              ; stdout
+    mov RBX, 1              ; one byte
+    mov RCX, AL             ; buffer pointer, one byte
     syscall
     ret

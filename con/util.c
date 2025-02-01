@@ -7,6 +7,7 @@ char *read_file(const char *fp) {
     fseek(f, 0, SEEK_SET);
 
     char *buffer = calloc(len, sizeof(char));
+    memset(buffer, ' ', len);
     fread(buffer, sizeof(char), len, f);
     buffer[len] = '\0';
     return buffer;
@@ -29,8 +30,9 @@ char *remove_comments(char *fp) {
 
 char *remove_empty_lines(char *fp) {
     char *buffer = calloc(strlen(fp), sizeof(char));
+    memset(buffer, ' ', strlen(fp));
     char *buffer1 = calloc(strlen(fp), sizeof(char));
-    char *buffer2 = calloc(strlen(fp), sizeof(char));
+    memset(buffer1, ' ', strlen(fp));
     int j = 0;
     for (int i = 0; fp[i] != '\0'; i++) {
         if (fp[i] == ' ') {
@@ -50,73 +52,47 @@ char *remove_empty_lines(char *fp) {
         j++;
     }
 
-    j = 0;
-    for (int i = 0; buffer1[i] != '\0'; i++) {
-        if ((buffer1[i - 1] == ':')) {
-            for (; buffer1[i] == ' ' || buffer1[i] == '\n'; i++) {
-            }
-        }
-        buffer2[j] = buffer1[i];
-        j++;
-    }
     free(fp);
     free(buffer);
-    free(buffer1);
-    return buffer2;
+    return buffer1;
 }
 
-struct line * create_line(const int n, const char *o) {
-    struct line* l = malloc(sizeof(struct line));
-    l->number = n;
-    l->org = calloc(strlen(o), sizeof(char));
-    strcpy(l->org, o);
-    return l;
-}
-
-line_list* create_node_list(struct line* l) {
-    line_list* list = malloc(sizeof(line_list));
-
-    list->node = l;
-    list->next = NULL;
-
-    return list;
-}
-
-void append_line_list(line_list* list, struct line* line) {
-    line_list* it = list;
-    while (it->next != NULL) {
-        it = it->next;
+char *split_prep(char *fp) {
+    for (int i = 0; fp[i] != '\0'; ++i) {
+        if (fp[i] == ':' || fp[i] == ',') {
+            fp[i] = ' ';
+        }
     }
-    it->next = create_node_list(line);
+    return fp;
 }
 
-void free_line(struct line* l) {
-    free(l->org);
-    free(l);
-}
-
-void free_list(line_list* l) {
-    if (l->next == NULL) {
-        free_line(l->node);
-        free(l);
-        return;
-    }
-    free_line(l->node);
-    free_list(l->next);
-    free(l);
-}
-
-
-
-line_list* process_file_to_list(char* f) {
-    const char* tok = strtok(f, "\n");
+char **split_to_array(char *fp) {
     int i = 0;
-    line_list* lt = create_node_list(create_line(i, tok));
-    tok = strtok(NULL, "\n");
+    int max = 100;
+    char **arr = calloc(max, sizeof(char *));
+
+    fp = split_prep(fp);
+    char *tok = strtok(fp, "\n");
     while (tok != NULL) {
-        append_line_list(lt, create_line(i, tok));
-        i++;
+        arr[i] = calloc(strlen(tok) + 1, sizeof(char));
+        bool can = false;
+        for (int j = 0; tok[j] != '\0'; ++j) {
+            if (tok[j] != ' ') {
+                can = true;
+                break;
+            }
+        }
+        if (can == true) {
+            strcpy(arr[i], tok);
+            i++;
+        }
+        if (i + 1 == max) {
+            max += (max / 2);
+            arr = realloc(arr, sizeof(char *) * max);
+        }
+
         tok = strtok(NULL, "\n");
     }
-    return lt;
+    arr[i] = NULL;
+    return arr;
 }
