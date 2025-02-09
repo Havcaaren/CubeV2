@@ -31,8 +31,7 @@ ARCHITECTURE rtl OF reg_map IS
 
 BEGIN
 
-	ddf_clock_process: 
-	PROCESS (clk, rst_a)
+  ddf_clock_process: PROCESS (clk, rst_a)
 	BEGIN
 		IF rst_a = '1' THEN
       FOR i IN 0 TO 15 LOOP
@@ -45,9 +44,9 @@ BEGIN
 		END IF;
 	END PROCESS ddf_clock_process;
 
-  output_A <= register_map(to_integer(unsigned(reg_sel_A))) WHEN rd = '1' ELSE
+  output_A <= register_map(to_integer(unsigned(reg_sel_A))) WHEN reg_sel_A /= "1111" AND rd = '1' ELSE
               (OTHERS => '0');
-  output_B <= register_map(to_integer(unsigned(reg_sel_B))) WHEN rd = '1' ELSE
+  output_B <= register_map(to_integer(unsigned(reg_sel_B))) WHEN rreg_sel_B /= "1111" AND d = '1' ELSE
               (OTHERS => '0');
 
 
