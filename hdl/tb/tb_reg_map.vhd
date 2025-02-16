@@ -22,7 +22,7 @@ ARCHITECTURE tb OF tb_reg_map IS
       to_unsigned(
         integer(
           round(r * real(max_val - min_val + 1) + real(min_val) - 0.5)
-        ), 8
+        ), 32
       )             
     );
   END FUNCTION;
@@ -55,10 +55,10 @@ ARCHITECTURE tb OF tb_reg_map IS
   ) IS 
   BEGIN
     reg  <= pos;
-    WAIT UNTIL rising_edge(clk);
     rd   <= '1';
+    WAIT UNTIL rising_edge(clk);   
+    --WAIT UNTIL falling_edge(clk);
     val  := in_v;
-    WAIT UNTIL falling_edge(clk);
     WAIT UNTIL rising_edge(clk);
     rd   <= '0';
   END PROCEDURE;
@@ -68,7 +68,8 @@ ARCHITECTURE tb OF tb_reg_map IS
     SIGNAL clk   : IN  std_logic;
     SIGNAL ld    : OUT std_logic;
     SIGNAL rd    : OUT std_logic;
-    SIGNAL reg   : OUT std_logic_vector(3  DOWNTO 0);
+    SIGNAL reg_i : OUT std_logic_vector(3  DOWNTO 0);
+    SIGNAL reg_o : OUT std_logic_vector(3  DOWNTO 0);
     SIGNAL in_v  : OUT std_logic_vector(31 DOWNTO 0);
     SIGNAL out_v : IN  std_logic_vector(31 DOWNTO 0);
     VARIABLE cnt : OUT natural
@@ -79,22 +80,27 @@ ARCHITECTURE tb OF tb_reg_map IS
   BEGIN 
     REPORT "STORING NUMBERS";
     FOR idx IN 0 TO 14 LOOP
-      num(idx) := rand_vec(0, 255);
+      num(idx) := rand_vec(0, 40000000);
+      REPORT "SOTRED : " & integer'image(to_integer(unsigned(num(idx))));
       store_number(
-        std_logic_vector(to_unsigned(idx, reg'length)),
+        std_logic_vector(to_unsigned(idx, reg_i'length)),
           num(idx),
-          clk, ld, reg, in_v
+          clk, ld, reg_i, in_v
         );            
     END LOOP;
-    
+    WAIT FOR 98 ns;
+    REPORT "GETTING NUMBERS";
     FOR idx IN 0 TO 14 LOOP      
       get_number(
-        std_logic_vector(to_unsigned(idx, reg'length)),
-          clk, rd, reg, out_v, n
+        std_logic_vector(to_unsigned(idx, reg_o'length)),
+          clk, rd, reg_o, out_v, n
         );
         IF n = num(idx) THEN 
           cc := cc + 1;
         END IF;
+        
+        REPORT "RETRIEVED : " & integer'image(to_integer(unsigned(n)));
+        REPORT "EXPECTED : " & integer'image(to_integer(unsigned(num(idx))));
     END LOOP;
     cnt := cc;
   END PROCEDURE;
@@ -114,9 +120,9 @@ ARCHITECTURE tb OF tb_reg_map IS
     rd            : IN std_logic;
     ld            : IN std_logic;
 
-	  input         : IN  std_logic_vector(31 DOWNTO 0);
-    output_val_A  : OUT std_logic_vector(31 DOWNTO 0);
-    output_val_B  : OUT std_logic_vector(31 DOWNTO 0)
+	input         : IN  std_logic_vector(31 DOWNTO 0);
+    output_A      : OUT std_logic_vector(31 DOWNTO 0);
+    output_B      : OUT std_logic_vector(31 DOWNTO 0)
   );
   END COMPONENT reg_map;
     
@@ -131,9 +137,9 @@ ARCHITECTURE tb OF tb_reg_map IS
   SIGNAL out_A_i   : std_logic_vector(31 DOWNTO 0) := (OTHERS => '0');
   SIGNAL out_B_i   : std_logic_vector(31 DOWNTO 0) := (OTHERS => '0');
     
-  SIGNAL reg_sel_A : std_logic_vector(3  DOWNTO 0) := "1111";
-  SIGNAL reg_sel_B : std_logic_vector(3  DOWNTO 0) := "1111";
-  SIGNAL reg_sel_C : std_logic_vector(3  DOWNTO 0) := "1111";
+  SIGNAL reg_sel_A : std_logic_vector(3  DOWNTO 0) := "0000";
+  SIGNAL reg_sel_B : std_logic_vector(3  DOWNTO 0) := "0000";
+  SIGNAL reg_sel_C : std_logic_vector(3  DOWNTO 0) := "0000";
     
   SHARED VARIABLE cc : natural := 0;
     
@@ -167,17 +173,25 @@ BEGIN
     rd           => rd_i,  
     ld           => ld_i,  
 
-	  input        => in_i, 
-    output_val_A => out_A_i, 
-    output_val_B => out_B_i
+	input        => in_i, 
+    output_A     => out_A_i, 
+    output_B     => out_B_i
   );
    
   PROCESS 
   BEGIN
     WAIT FOR 10 ns;
     WAIT UNTIL rst_a = '0';
+
         
-    side(clk, ld_i, rd_i, reg_sel_A, in_i, out_A_i, cc);
+    side(clk, ld_i, rd_i, reg_sel_C, reg_sel_A, in_i, out_A_i, cc);
+    IF cc = 15 THEN 
+        REPORT "ALL CORRECT";
+    ELSE 
+        REPORT "NO ALL CORRECT, CORRECT NUMBER: " & integer'image(cc);
+    END IF; 
+    ASSERT (FALSE) REPORT "END"
+    SEVERITY FAILURE;
     --store_number("0111", x"DE", clk, ld_A_i, reg_sel_A, in_A_i);
         
     WAIT;
