@@ -1,5 +1,9 @@
 cmake-*
 .idea*
+vivado_proj
+*.swp
+*.cf
 *.o
 *.gch
-a.out
+*.out
+con
