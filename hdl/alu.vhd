@@ -92,7 +92,7 @@ BEGIN
              unsigned(val_b); --                                    WHEN mode(6 DOWNTO 0) = "1001111" ELSE
 
 
-  result <= std_logic_vector(res_sig) WHEN mode(7) = '1' ELSE
+  result <= std_logic_vector(res_sig) WHEN mode(7) = '0' ELSE
             std_logic_vector(res_uns);
 
   val_c <= result;

@@ -52,7 +52,7 @@ ARCHITECTURE tb OF tb_alu IS
     a <= val_a;
     b <= val_b;
     WAIT UNTIL rising_edge(clk);
-    REPORT "SIGNED CALC: " & integer'image(to_integer(unsigned(c)));
+    REPORT "NUM A: " & integer'image(to_integer(unsigned(val_a))) & ", B: " & integer'image(to_integer(unsigned(val_b))) & ", Mode: " & integer'image(to_integer(unsigned(mode))) & ", SIGNED CALC: " & integer'image(to_integer(unsigned(c)));
 
   END PROCEDURE;
     
@@ -101,6 +101,16 @@ BEGIN
     b_i := x"00000001";
     m_i := x"01";
     
+    calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
+
+    a_i := x"0000000F";
+    b_i := x"0000000F";
+    m_i := x"01";
+    calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
+    
+    a_i := x"00000000";
+    b_i := x"0000000F";
+    m_i := "11000001";
     calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
 
   END PROCESS stimul;
