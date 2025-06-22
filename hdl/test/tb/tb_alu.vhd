@@ -56,17 +56,20 @@ ARCHITECTURE tb OF tb_alu IS
 
   END PROCEDURE;
     
-    
+  CONSTANT TIMEOUT : integer := 100000;
  
 BEGIN
 
 
   clk_gen: PROCESS
   BEGIN
-    clk_i <= '0';
-    WAIT FOR C_CLOCK_PERIOD;
-    clk_i <= '1';
-    WAIT FOR C_CLOCK_PERIOD;
+    FOR idx IN 0 TO TIMEOUT LOOP
+      clk_i <= '0';
+      WAIT FOR C_CLOCK_PERIOD;
+      clk_i <= '1';
+      WAIT FOR C_CLOCK_PERIOD;
+    END LOOP;
+    WAIT;
   END PROCESS clk_gen;
 
   rst_gen: PROCESS
@@ -103,16 +106,26 @@ BEGIN
     
     calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
 
+    WAIT UNTIL rising_edge(clk_i);
+    WAIT UNTIL rising_edge(clk_i);
+    WAIT UNTIL rising_edge(clk_i);
+
     a_i := x"0000000F";
     b_i := x"0000000F";
     m_i := x"01";
     calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
     
-    a_i := x"00000000";
-    b_i := x"0000000F";
-    m_i := "11000001";
-    calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
 
+    WAIT UNTIL rising_edge(clk_i);
+    WAIT UNTIL rising_edge(clk_i);
+    WAIT UNTIL rising_edge(clk_i);
+
+    -- a_i := x"80000000";
+    -- b_i := x"0000000F";
+    -- m_i := x"01";
+    -- calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
+
+    WAIT;
   END PROCESS stimul;
 
 END tb;

@@ -4,3 +4,4 @@ vivado_proj
 *.cf
 .fleet
 *.o
+*vivado*
