@@ -102,7 +102,7 @@ BEGIN
     
     a_i := x"0000000F";
     b_i := x"00000001";
-    m_i := x"01";
+    m_i := x"00";
     
     calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
 
@@ -110,15 +110,13 @@ BEGIN
     WAIT UNTIL rising_edge(clk_i);
     WAIT UNTIL rising_edge(clk_i);
 
-    a_i := x"0000000F";
-    b_i := x"0000000F";
     m_i := x"01";
     calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
     
 
-    WAIT UNTIL rising_edge(clk_i);
-    WAIT UNTIL rising_edge(clk_i);
-    WAIT UNTIL rising_edge(clk_i);
+    -- WAIT UNTIL rising_edge(clk_i);
+    -- WAIT UNTIL rising_edge(clk_i);
+    -- WAIT UNTIL rising_edge(clk_i);
 
     -- a_i := x"80000000";
     -- b_i := x"0000000F";
