@@ -9,7 +9,7 @@ END tb_reg_map;
 
 ARCHITECTURE tb OF tb_reg_map IS
   TYPE t_arr IS ARRAY (0 to 14) OF std_logic_vector(31 downto 0);
-  SHARED VARIABLE seed1, seed2 : integer := 999;
+  SHARED VARIABLE seed1, seed2 : integer := 1000;
   
   
   IMPURE FUNCTION rand_vec(min_val, max_val : integer) 
@@ -142,15 +142,20 @@ ARCHITECTURE tb OF tb_reg_map IS
   SIGNAL reg_sel_C : std_logic_vector(3  DOWNTO 0) := "0000";
     
   SHARED VARIABLE cc : natural := 0;
-    
+
+  CONSTANT TIMEOUT : integer := 100000;
+
 BEGIN
 
   PROCESS 
   BEGIN
-    clk <= '0';
-    WAIT FOR 10 ns;
-    clk <= '1';
-    WAIT FOR 10 ns;
+    FOR idx IN 0 TO TIMEOUT LOOP
+      clk <= '0';
+      WAIT FOR 10 ns;
+      clk <= '1';
+      WAIT FOR 10 ns;
+    END LOOP;
+    WAIT;
   END PROCESS;
     
   PROCESS 
@@ -190,8 +195,9 @@ BEGIN
     ELSE 
         REPORT "NO ALL CORRECT, CORRECT NUMBER: " & integer'image(cc);
     END IF; 
-    ASSERT (FALSE) REPORT "END"
-    SEVERITY FAILURE;
+
+    --ASSERT (FALSE) REPORT "END"
+    --SEVERITY FAILURE;
     --store_number("0111", x"DE", clk, ld_A_i, reg_sel_A, in_A_i);
         
     WAIT;
