@@ -26,15 +26,17 @@ ARCHITECTURE rtl OF alu IS
 
   SIGNAL rsl  : std_logic_vector(31 DOWNTO 0);
 
-  SIGNAL sgn_add_res : std_logic_vector(32 DOWNTO 0);
-  SIGNAL sgn_sub_res : std_logic_vector(32 DOWNTO 0);
-  SIGNAL uns_add_res : std_logic_vector(32 DOWNTO 0);
-  SIGNAL uns_sub_res : std_logic_vector(32 DOWNTO 0);
+  SIGNAL sgn_add_res  : std_logic_vector(32 DOWNTO 0);
+  SIGNAL sgn_sub_res  : std_logic_vector(32 DOWNTO 0);
+  SIGNAL uns_add_res  : std_logic_vector(32 DOWNTO 0);
+  SIGNAL uns_sub_res  : std_logic_vector(32 DOWNTO 0);
   
-  
+  SIGNAL over_i       : std_logic;
+  SIGNAL carry_out_q  : std_logic;
+
 BEGIN
 
-  ddf_proc: PROCESS (clk, rst_a)
+  dff_proc: PROCESS (clk, rst_a)
   BEGIN
     IF rst_a = '1' THEN 
       flag_q <= (OTHERS => '0');
@@ -43,7 +45,7 @@ BEGIN
         flag_q <= flag_d;
       END IF;
     END IF;
-  END PROCESS ddf_proc;
+  END PROCESS dff_proc;
 
   flag_e <= '1' WHEN flag_d /= flag_q ELSE
             '0';
@@ -55,11 +57,24 @@ BEGIN
   -- Neg
   flag_d(1) <= '1' WHEN rsl(31) = '1' ELSE
                '0';
-  -- add carry reg
-  -- -- Over  
-  -- flag_d(0) <= '1' WHEN result = (OTHERS => '0') ELSE
-  --              '0';
- 
+  
+  -- Over  
+  flag_d(2) <= '1' WHEN uns_add_res(32) = '1' AND mode = x"0E" ELSE
+               '1' WHEN uns_sub_res(32) = '0' AND mode = x"0F" ELSE
+               '1' WHEN sgn_add_res(32) = '1' AND mode = x"00" ELSE
+               '1' WHEN sgn_sub_res(32) = '0' AND mode = x"01" ELSE
+               '0';
+
+  -- rotate
+  flag_d(3) <= val_a(0)  WHEN mode = x"0A" ELSE
+               val_a(31) WHEN mode = x"0B" ELSE
+               flag_q(3);
+  
+  -- shift
+  flag_d(4) <= val_a(0)  WHEN mode = x"0C" ELSE
+               val_a(31) WHEN mode = x"0D" ELSE
+               flag_q(4);
+
   sgn_add_res <= std_logic_vector(resize(signed(val_a), 33) + signed(val_b));
   sgn_sub_res <= std_logic_vector(resize(signed(val_a), 33) - signed(val_b));
 
@@ -78,12 +93,12 @@ BEGIN
          val_a NOR  val_b                                    WHEN mode = x"07" ELSE
          val_a XOR  val_b                                    WHEN mode = x"08" ELSE
          val_a XNOR val_b                                    WHEN mode = x"09" ELSE
-         val_a SLL to_integer(unsigned(val_b(4 DOWNTO 0)))   WHEN mode = x"0A" ELSE -- reimplement with carry reg
-         val_a SRL to_integer(unsigned(val_b(4 DOWNTO 0)))   WHEN mode = x"0B" ELSE
-         val_a ROL to_integer(unsigned(val_b(4 DOWNTO 0)))   WHEN mode = x"0C" ELSE
-         val_a ROR to_integer(unsigned(val_b(4 DOWNTO 0)))   WHEN mode = x"0D" ELSE
+         val_a(31 DOWNTO 1) & flag_q                         WHEN mode = x"0A" ELSE
+         flag_q & val_a(30 DOWNTO 0)                         WHEN mode = x"0B" ELSE
+         val_a(31 DOWNTO 1) & '0'                            WHEN mode = x"0C" ELSE
+         '0' & val_a(30 DOWNTO 0)                            WHEN mode = x"0D" ELSE
          (OTHERS => '0');
-
+        
   val_c <= rsl;
   flags <= flag_q;
 
