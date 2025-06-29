@@ -1,8 +1,8 @@
 reg_map:
-	ghdl -c reg_map.vhd
+	python3 test/test.py -e -r --test tb_reg_map --in test/tb/tb_reg_map.vhd reg_map.vhd
 
 alu:
-	ghdl -c alu.vhd
+	python3 test/test.py -q -e -r --test tb_alu --in test/tb/tb_alu.vhd alu.vhd
 
 clean:
-	rm *.cf
+	rm -v *.cf *.o tb_reg_map tb_alu

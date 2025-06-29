@@ -3,5 +3,8 @@ cmake-*
 vivado_proj
 *.swp
 *.cf
-*.cf
 .fleet
+*.o
+*vivado*
+.vscode
+.Xil
