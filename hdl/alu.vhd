@@ -47,6 +47,8 @@ BEGIN
     END IF;
   END PROCESS dff_proc;
 
+  flag_d(7 DOWNTO 5) <= (OTHERS => '0'); 
+  
   flag_e <= '1' WHEN flag_d /= flag_q ELSE
             '0';
 
@@ -93,8 +95,8 @@ BEGIN
          val_a NOR  val_b                                    WHEN mode = x"07" ELSE
          val_a XOR  val_b                                    WHEN mode = x"08" ELSE
          val_a XNOR val_b                                    WHEN mode = x"09" ELSE
-         val_a(31 DOWNTO 1) & flag_q                         WHEN mode = x"0A" ELSE
-         flag_q & val_a(30 DOWNTO 0)                         WHEN mode = x"0B" ELSE
+         val_a(31 DOWNTO 1) & flag_q(3)                      WHEN mode = x"0A" ELSE
+         flag_q(3) & val_a(30 DOWNTO 0)                      WHEN mode = x"0B" ELSE
          val_a(31 DOWNTO 1) & '0'                            WHEN mode = x"0C" ELSE
          '0' & val_a(30 DOWNTO 0)                            WHEN mode = x"0D" ELSE
          (OTHERS => '0');

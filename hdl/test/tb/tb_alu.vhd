@@ -102,17 +102,24 @@ BEGIN
     
     a_i := x"0000000F";
     b_i := x"00000001";
-    m_i := x"00";
+    -- m_i := x"00";
     
-    calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
+    -- calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
 
-    WAIT UNTIL rising_edge(clk_i);
-    WAIT UNTIL rising_edge(clk_i);
-    WAIT UNTIL rising_edge(clk_i);
+    -- WAIT UNTIL rising_edge(clk_i);
+    -- WAIT UNTIL rising_edge(clk_i);
+    -- WAIT UNTIL rising_edge(clk_i);
 
-    m_i := x"01";
-    calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
+    -- m_i := x"01";
+    -- calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
     
+    WAIT FOR 10 ns; 
+    WAIT UNTIL rising_edge(clk_i);
+
+    FOR idx IN 0 TO 15 LOOP
+      m_i := std_logic_vector(to_unsigned(idx, 8));
+      calculate_sgn(clk_i, a_i, b_i, m_i, mode_i, val_a_i, val_b_i, val_c_i);
+    END LOOP;
 
     -- WAIT UNTIL rising_edge(clk_i);
     -- WAIT UNTIL rising_edge(clk_i);
