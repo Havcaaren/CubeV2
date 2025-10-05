@@ -50,9 +50,12 @@ if '-e' in argv:
     elaborate(files)
 
 if '-r' in argv:
+    file : str = ""
     if '-q' in argv:
-        print('\n'.join([i for i in run_test(test_name).stdout.splitlines() if i.find('metavalue detected') == -1]))
+        file : str = '\n'.join([i for i in run_test(test_name).stdout.splitlines() if i.find('metavalue detected') == -1])
     else:
         print(run_test(test_name).stdout)
-
+    if file != "":
+        with open("out.txt", 'w') as f:
+            f.write(file)
 

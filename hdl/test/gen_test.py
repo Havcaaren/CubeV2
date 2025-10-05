@@ -1,22 +1,26 @@
 from random import randrange
 import sys
+import threading
 
 #######################################################################
 
 
 IO_SIZE : int = 32
+MAX_NUB : int = 8
 
-NUMBER_OF_TESTS : int = 10
+NUMBER_OF_TESTS : int = 100000
 
 INPUTS_SIGNALS  : list = ['val_a_i', 'val_b_i']
 OUTPUTS_SIGNALS : list = ['val_c_i']
 
-SEQUENCE : list = ['setRandomAll', 'checkModelSingle']
+SEQUENCE : list = ['setRandomAll', 'waitClock' , 'checkModelSingle']
+
+CLOCK : int = 9
 
 #######################################################################
 
 
-
+res : list = ['' for i in range(8)]
 
 class Model:
     def __init__(self):
@@ -41,7 +45,7 @@ class Model:
 m = Model()
 
 def get_rand() -> str:
-    return randrange(0, 2**32, 1)
+    return randrange(0, 2**MAX_NUB, 1)
 
 
 def get_hex(input : int) -> str:
@@ -69,33 +73,61 @@ def checkModelSingle(inputs : list):
     for s in zip(OUTPUTS_SIGNALS, outputs):
         buffer += '\tIF ' + s[0] + ' = ' + s[1]  + ' THEN\n'
         buffer += '\t\tcc := cc + 1;\n'
+        buffer += '\tELSE'
+        buffer += '\t\tREPORT "VAL A:";'
+        buffer += "\t\tREPORT integer'image(to_integer(unsigned(val_a_i)));\n"
+        buffer += '\t\tREPORT "VAL B:";'
+        buffer += "\t\tREPORT integer'image(to_integer(unsigned(val_b_i)));\n"
+        buffer += '\t\tREPORT "VAL C:";'
+        buffer += "\t\tREPORT integer'image(to_integer(unsigned(val_c_i)));\n"
         buffer += '\tEND IF;\n'
     return buffer
 
-buffer : str = ''
-inputs : list = []
-for i in range(NUMBER_OF_TESTS):
-    buffer += '\t-- Test' + str(i) + ':\n'
 
-    for s in SEQUENCE:
-        match s:
-            case x if "setRandomAll" in x:
-                b, i = setRandomAll()
-                buffer += b
-                inputs.append(i)
-                print(inputs)
-            case x if "checkModelSingle" in x:
-                b = checkModelSingle(inputs[-1])
-                buffer += b
+def gen_test(a : int, b : int, c : int):
+    buffer : str = ''
+    inputs : list = []
+    for i in range(a, b):
+        # print(f"{(i/NUMBER_OF_TESTS)*100:2.2}%")
+        buffer += '\t-- Test' + str(i) + ':\n'
 
-    buffer += '\n'
-print(buffer)
-#
-#
-# with open(sys.argv[1], 'r') as f:
-#     file = f.read()
-#
-# file = file.replace('%TEST%', buffer)
-#
-# with open(sys.argv[1], 'w') as f:
-#     f.write(file)
+        for s in SEQUENCE:
+            match s:
+                case x if "setRandomAll" in x:
+                    b, i = setRandomAll()
+                    buffer += b
+                    inputs.append(i)
+                    # print(inputs)
+                case x if "checkModelSingle" in x:
+                    b = checkModelSingle(inputs[-1])
+                    buffer += b
+                case x if "waitClock" in x:
+                    buffer += "\tWAIT FOR " + str(CLOCK) + " ns;\n"
+
+        buffer += '\n'
+    res[c] = buffer
+# print(buffer)
+
+
+it = NUMBER_OF_TESTS // 8
+pos = 0
+treads : list = []
+for i in range(8):
+    treads.append(threading.Thread(target=gen_test, args=(pos,pos + it, i, )))
+    pos += it
+
+a = [i.start() for i in treads]
+b = [i.join() for i in treads]
+# print(a)
+# print(b)
+
+buffer = '\n'.join(res)
+# print(buffer)
+
+with open(sys.argv[1], 'r') as f:
+    file = f.read()
+
+file = file.replace('%TEST%', buffer).replace('%X%', str(NUMBER_OF_TESTS))
+
+with open(sys.argv[1], 'w') as f:
+    f.write(file)

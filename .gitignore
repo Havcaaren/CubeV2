@@ -7,3 +7,5 @@ vivado_proj
 *vivado*
 .vscode
 .Xil
+hdl/test/tb/*
+*out.txt*
