@@ -7,6 +7,11 @@
 #include <string.h>
 #include <stdbool.h>
 
+typedef struct {
+    int len;
+    void *ptr;
+} PAIR;
+
 char *read_file(const char *fp);
 
 void output_file(const char *fp, size_t len);

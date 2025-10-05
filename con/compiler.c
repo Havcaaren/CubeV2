@@ -42,7 +42,7 @@ CODE_LINE *create_line_op_1A(char *o, char *a0) {
     s->val.instruction.op = calloc(strlen(o) + 1, sizeof(char));
     strcpy(s->val.instruction.op, o);
     s->val.instruction.a0 = calloc(strlen(a0) + 1, sizeof(char));
-    strcpy(s->val.instruction.a0, o);
+    strcpy(s->val.instruction.a0, a0);
 
     return s;
 }
@@ -54,9 +54,9 @@ CODE_LINE *create_line_op_2A(char *o, char *a0, char *a1) {
     s->val.instruction.op = calloc(strlen(o) + 1, sizeof(char));
     strcpy(s->val.instruction.op, o);
     s->val.instruction.a0 = calloc(strlen(a0) + 1, sizeof(char));
-    strcpy(s->val.instruction.a0, o);
+    strcpy(s->val.instruction.a0, a0);
     s->val.instruction.a1 = calloc(strlen(a1) + 1, sizeof(char));
-    strcpy(s->val.instruction.a1, o);
+    strcpy(s->val.instruction.a1, a1);
 
     return s;
 }
@@ -68,11 +68,11 @@ CODE_LINE *create_line_op_3A(char *o, char *a0, char *a1, char *a2) {
     s->val.instruction.op = calloc(strlen(o) + 1, sizeof(char));
     strcpy(s->val.instruction.op, o);
     s->val.instruction.a0 = calloc(strlen(a0) + 1, sizeof(char));
-    strcpy(s->val.instruction.a0, o);
+    strcpy(s->val.instruction.a0, a0);
     s->val.instruction.a1 = calloc(strlen(a1) + 1, sizeof(char));
-    strcpy(s->val.instruction.a1, o);
+    strcpy(s->val.instruction.a1, a1);
     s->val.instruction.a2 = calloc(strlen(a2) + 1, sizeof(char));
-    strcpy(s->val.instruction.a2, o);
+    strcpy(s->val.instruction.a2, a2);
 
     return s;
 }
@@ -106,7 +106,7 @@ char *strip_label(char *l) {
     return ret;
 }
 
-CODE_LINE **process_file(char **fp) {
+PAIR *process_file(char **fp) {
     int index = 0;
     int max = 10;
     CODE_LINE **arr = calloc(max, sizeof(CODE_LINE *));
@@ -148,6 +148,56 @@ CODE_LINE **process_file(char **fp) {
             arr = realloc(arr, sizeof(CODE_LINE *) * max);
         }
     }
+    PAIR *a = malloc(sizeof(PAIR));
+    a->len = index;
+    a->ptr = arr;
+    return a;
+}
 
-    return arr;
+void print_code_line(PAIR *lines) {
+    CODE_LINE **it = (CODE_LINE**)(lines->ptr);
+
+    for (int i = 0; i < lines->len; i ++) {
+        switch ((*it)->type) {
+            case code_line_command: {
+                if ((*it)->val.command.ops == NULL) {
+                    printf("Command: %s\n", (*it)->val.command.name);
+                } else {
+                    printf("Command: %s; ops: %s\n", (*it)->val.command.name, (*it)->val.command.ops);
+                }
+                break;
+            }
+
+            case code_line_instruction_0A: {
+                printf("Instruction: %s\n", (*it)->val.instruction.op);
+                break;
+            }
+
+            case code_line_instruction_1A: {
+                printf("Instruction: %s; Val: %s\n", (*it)->val.instruction.op, (*it)->val.instruction.a0);
+                break;
+            }
+
+            case code_line_instruction_2A: {
+                printf("Instruction: %s; Val0: %s; Val1: %s\n", (*it)->val.instruction.op,
+                        (*it)->val.instruction.a0,
+                        (*it)->val.instruction.a1);
+                break;
+            }
+
+            case code_line_instruction_3A: {
+                printf("Instruction: %s; Val0: %s; Val1: %s; Val2: %s\n", (*it)->val.instruction.op,
+                        (*it)->val.instruction.a0,
+                        (*it)->val.instruction.a1,
+                        (*it)->val.instruction.a2);
+                break;
+            }
+
+            case code_line_label: {
+                printf("Label: %s; Add: %d\n", (*it)->val.label.name, (*it)->val.label.address);
+                break;
+            }
+        }
+        it++;
+    }
 }
