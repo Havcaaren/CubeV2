@@ -21,8 +21,8 @@ int main(const int argc, char **argv) {
         i++;
     }
 
-    CODE_LINE **arr = process_file(a);
-
+    PAIR *arr = process_file(a);
+    print_code_line(arr);
     free(fl);
     return 0;
 }

@@ -1,0 +1,3 @@
+[submodule "con/coroutines"]
+	path = con/coroutines
+	url = https://github.com/tsoding/coroutines.git

@@ -10,3 +10,5 @@ vivado_proj
 .Xil
 hdl/test/tb/*
 *out.txt*
+*.gch
+*.out

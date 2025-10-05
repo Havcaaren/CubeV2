@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "util.h"
 
 enum code_line_type {
     code_line_command,
@@ -52,6 +53,8 @@ int eval_num(char *num);
 
 char *strip_label(char *l);
 
-CODE_LINE **process_file(char **fp);
+PAIR *process_file(char **fp);
+
+void print_code_line(PAIR *lines);
 
 #endif //COMPILER_H
