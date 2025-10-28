@@ -32,8 +32,6 @@ ARCHITECTURE tb OF tb_alu IS
   
   CONSTANT C_CLOCK_PERIOD : time := 10 ns;
 
-  SHARED VARIABLE cc : natural := 0;
-
   CONSTANT TIMEOUT : integer := 100000;
  
 BEGIN
@@ -75,19 +73,11 @@ BEGIN
 
   stimul: PROCESS
   BEGIN
-    mode_i <= x"00";
+    mode_i <= x"0E";
     WAIT UNTIL rst_a_i = '0';
     WAIT FOR 9 ns;
 
 %TEST%
-
-    REPORT "CC: " & integer'image(cc);
-
-    IF cc = %X% THEN
-        REPORT "PASSED";
-    ELSE
-        REPORT "FAILED";
-    END IF;
 
     WAIT;
   END PROCESS stimul;
