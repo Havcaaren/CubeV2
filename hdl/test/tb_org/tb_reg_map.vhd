@@ -188,18 +188,38 @@ BEGIN
     WAIT FOR 10 ns;
     WAIT UNTIL rst_a = '0';
 
+    --reg_sel_A <= "0000";
+    --in_i <= x"0f0f0AA0";
+    --WAIT FOR 1 ns;
+    --ld_i <= '1';
+    --WAIT until rising_edge(clk);
+    --ld_i <= '0';
+    --WAIT UNTIL rising_edge(clk);
+    --WAIT UNTIL  rising_edge(clk);
+    --
+    --rd_i <= '1';
+    --WAIT UNTIL  rising_edge(clk);
+
+    --IF out_B_i <=  x"0f0f0AA0" THEN
+    --  REPORT "CORR";
+    --ELSE
+    --  REPORT "FAIL";
+    --END IF;
+
         
-    side(clk, ld_i, rd_i, reg_sel_C, reg_sel_A, in_i, out_A_i, cc);
-    IF cc = 15 THEN 
-        REPORT "ALL CORRECT";
-    ELSE 
-        REPORT "NO ALL CORRECT, CORRECT NUMBER: " & integer'image(cc);
-    END IF; 
+    --side(clk, ld_i, rd_i, reg_sel_C, reg_sel_A, in_i, out_A_i, cc);
+    --IF cc = 15 THEN 
+    --    REPORT "ALL CORRECT";
+    --ELSE 
+    --    REPORT "NO ALL CORRECT, CORRECT NUMBER: " & integer'image(cc);
+    --END IF; 
 
     --ASSERT (FALSE) REPORT "END"
     --SEVERITY FAILURE;
     --store_number("0111", x"DE", clk, ld_A_i, reg_sel_A, in_A_i);
-        
+
+    %TEST%
+
     WAIT;
   END PROCESS;
 
