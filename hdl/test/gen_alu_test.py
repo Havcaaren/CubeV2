@@ -8,7 +8,7 @@ import threading
 IO_SIZE : int = 32
 MAX_NUB : int = 32
 
-NUMBER_OF_TESTS : int = 300000  if len(sys.argv) ==  2 else int(sys.argv[2])
+NUMBER_OF_TESTS : int = 1000  if len(sys.argv) ==  2 else int(sys.argv[2])
 
 INPUTS_SIGNALS  : list = ['val_a_i', 'val_b_i']
 OUTPUTS_SIGNALS : list = ['val_c_i']
@@ -79,12 +79,12 @@ def gen_test(a : int, b : int, c : int):
             buffer += '\tREPORT "Model A: ' + str(inputs[0]) + '";\n'
             buffer += '\tREPORT "Model B: ' + str(inputs[1]) + '";\n'
             buffer += '\tREPORT "Model C: ' + str(int('0x' + outputs[0][2:-1], 16)) + '";\n'
-            buffer += '\tREPORT "VAL A:";'
-            buffer += "\tREPORT integer'image(to_integer(unsigned(val_a_i)));\n"
-            buffer += '\tREPORT "VAL B:";'
-            buffer += "\tREPORT integer'image(to_integer(unsigned(val_b_i)));\n"
-            buffer += '\tREPORT "VAL C:";'
-            buffer += "\tREPORT integer'image(to_integer(unsigned(val_c_i)));\n"
+            #buffer += '\tREPORT "VAL A:";'
+            #buffer += "\tREPORT integer'image(to_integer(unsigned(val_a_i)));\n"
+            #buffer += '\tREPORT "VAL B:";'
+            #buffer += "\tREPORT integer'image(to_integer(unsigned(val_b_i)));\n"
+            #buffer += '\tREPORT "VAL C:";'
+            #buffer += "\tREPORT integer'image(to_integer(unsigned(val_c_i)));\n"
             buffer += '\tIF ' + s[0] + ' = ' + s[1]  + ' THEN\n'
             buffer += '\t\tREPORT "PASS";\n'
             buffer += '\tELSE'

@@ -1,7 +1,6 @@
-test_alu: clean gen_alu alu check_test
+test_alu: clean prime_tb gen_alu alu check_test
 
-test_reg_map: clean gen_reg_map reg_map check_test
-	
+test_reg_map: clean gen_reg_map reg_map check_test	
 
 reg_map:
 	python3 test/test.py -q -e -r --test tb_reg_map --in test/tb/tb_reg_map.vhd reg_map.vhd
