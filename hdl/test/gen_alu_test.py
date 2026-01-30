@@ -8,7 +8,7 @@ import threading
 IO_SIZE : int = 32
 MAX_NUB : int = 32
 
-NUMBER_OF_TESTS : int = 1000  if len(sys.argv) ==  2 else int(sys.argv[2])
+NUMBER_OF_TESTS : int = 300000  if len(sys.argv) ==  2 else int(sys.argv[2])
 
 INPUTS_SIGNALS  : list = ['val_a_i', 'val_b_i']
 OUTPUTS_SIGNALS : list = ['val_c_i']

@@ -1,3 +1,7 @@
+regress: 
+	make test_alu
+	make test_reg_map
+
 test_alu: clean prime_tb gen_alu alu check_test
 
 test_reg_map: clean gen_reg_map reg_map check_test	
